@@ -6,28 +6,31 @@
 
 ## 数据集
 
-本项目尝试使用了多种不同的模型（包括HMM，CRF，Bi-LSTM，Bi-LSTM+CRF）来解决中文命名实体识别问题，数据集用的是CCKS2019中医疗文本数据，数据的格式如下，它的每一行由一个字及其对应的标注组成，标注集采用BMOES，句子之间用一个空行隔开。
+本项目尝试使用了多种不同的模型（包括HMM，CRF，Bi-LSTM，Bi-LSTM+CRF）来解决中文命名实体识别问题，数据集用的是CCKS2019中医疗文本数据(.txt, .json)，通过`./preprocess.py`的预处理后得到三个大小为6:2:2的数据集（train.char.bmes, dev.char.bmes, val.char.bmes），数据的格式如下，它的每一行由一个字及其对应的标注组成，标注集采用BMOES，每条数据之间用一个空行隔开。
 
 ```
-美	B-LOC
-国	E-LOC
-的	O
-华	B-PER
-莱	M-PER
-士	E-PER
-
-我	O
-跟	O
-他	O
-谈	O
-笑	O
-风	O
-生	O 
+患 O
+者 O
+因 O
+食 B-ILL
+管 M-ILL
+癌 E-ILL
+来 O
+我 O
+院 O
+诊 O
+治 O
+， O
+腹 S-SITE
+部 O
+无 O
+异 O
+样 O
 ```
 
 该数据集位于项目目录下的`data_set`文件夹里。
 
-##快速开始
+## 快速开始
 
 首先安装依赖项：
 ```
@@ -48,7 +51,7 @@ python3 test.py
 ```
 
 
-可开始训练评估模型，
+可开始训练评估模型。
 
 
 
