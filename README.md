@@ -1,8 +1,8 @@
-# 中文命名实体识别
+# 医疗命名实体识别
 
 
 
-本项目参考的是https://github.com/luopeixiang/named_entity_recognition
+本项目使用的是https://github.com/luopeixiang/named_entity_recognition 的代码框架，增改了其中关于数据处理和结果环节综合的部分，并对几个模型内部做了微调。
 
 ## 数据集
 
@@ -82,7 +82,7 @@ $z(s) = int(y(s) > 0.5)$为投票结果。
 **任务截止时间**：`12月14日`前上传至github
 
 ### 3.设计客户端
-要求见需求报告；调用`./predict.py`中的`synthetical_predict(sentence)`，即可返回sentence中的命名实体。如最上面的文本返回`[[3,6,'疾病和诊断'], [12,13,'解剖部位']]`。
+要求见需求报告；调用`./predict.py`中的`synthetical_predict(sentence)`，即可返回sentence中预测的医疗命名实体。如最上面的文本返回`[[3,6,'疾病和诊断'], [12,13,'解剖部位']]`。
 
 
 
