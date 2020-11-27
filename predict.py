@@ -47,7 +47,7 @@ def vote(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = predict('bilstm_crf', sentence)
+    result = predict('bilstm', sentence)
 
     return result
 
