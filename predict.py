@@ -20,7 +20,7 @@ def predict(model_name, sentence):
         pred_tag_list = model.test([test_word_list], [0])[0][0]
     elif model_name == 'bilstm_crf':
         test_word_list, _ = prepocess_data_for_lstmcrf([test_word_list], [[0]], test=True)
-        pred_tag_list = model.test([test_word_list], [0])[0][0]
+        pred_tag_list = model.test(test_word_list, [0])[0][0]
     elif model_name in ['hmm', 'crf']:
         pred_tag_list = model.test([test_word_list])[0]
     result = []
@@ -50,7 +50,7 @@ def vote(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = predict('crf', sentence)
+    result = predict('bilstm', sentence)
 
     return result
 
