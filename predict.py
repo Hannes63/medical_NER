@@ -2,29 +2,33 @@
 from utils import load_model
 
 
-def predict(model, sentence):
+def predict(model_name, sentence):
     """
     :param model: one of four trained model
     :param sentence: a string to be predicted
     :return: [[b_pos_1, e_pos_1, tag_1], ..., [b_pos_n, e_pos_n, tag_n]]
     left closed, right open
     """
-    assert model in ['bilstm', 'bilstm_crf', 'crf', 'hmm']
-    cn_dict = {'SITE': '解剖部位', 'ILL_DIAG': '疾病和诊断', 'CHECK': '检验',
+    assert model_name in ['bilstm', 'bilstm_crf', 'crf', 'hmm']
+    tag2cn = {'SITE': '解剖部位', 'ILL_DIAG': '疾病和诊断', 'CHECK': '检验',
                'OPS': '手术', 'DRUG': '药物', 'EXAM': '检查', 'IMAGE': '影像检查',
                'LAB': '实验室检验'}
-    model = load_model('./ckpts/' + model + '.pkl')
+    model = load_model('./ckpts/' + model_name + '.pkl')
     test_word_list = list(sentence)
-    pred_tag_list = model.test([test_word_list])[0]
+    pred_tag_list = []
+    if model_name in ['bilstm', 'bilstm_crf']:
+        pred_tag_list = model.test([test_word_list], [0])[0][0]
+    elif model_name in ['hmm', 'crf']:
+        pred_tag_list = model.test([test_word_list])[0]
     result = []
     begin_index = 0
     for i in range(len(pred_tag_list)):
         if pred_tag_list[i][0] == 'S':
-            result.append([i, i + 1, cn_dict[pred_tag_list[i][2:]]])
+            result.append([i, i + 1, tag2cn[pred_tag_list[i][2:]]])
         elif pred_tag_list[i][0] == 'B':
             begin_index = i
         elif pred_tag_list[i][0] == 'E':
-            result.append([begin_index, i + 1, cn_dict[pred_tag_list[i][2:]]])
+            result.append([begin_index, i + 1, tag2cn[pred_tag_list[i][2:]]])
     return result
 
 
@@ -43,7 +47,7 @@ def vote(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = predict('hmm', sentence)
+    result = predict('bilstm_crf', sentence)
 
     return result
 
@@ -79,3 +83,5 @@ def test():
         result = synthetical_predict(sentence)
         print('result2:', result)
 
+
+test()
