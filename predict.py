@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from utils import load_model
+from utils import load_model, prepocess_data_for_lstmcrf
 
 
 def predict(model_name, sentence):
@@ -16,7 +16,10 @@ def predict(model_name, sentence):
     model = load_model('./ckpts/' + model_name + '.pkl')
     test_word_list = list(sentence)
     pred_tag_list = []
-    if model_name in ['bilstm', 'bilstm_crf']:
+    if model_name == 'bilstm':
+        pred_tag_list = model.test([test_word_list], [0])[0][0]
+    elif model_name == 'bilstm_crf':
+        test_word_list, _ = prepocess_data_for_lstmcrf([test_word_list], [[0]], test=True)
         pred_tag_list = model.test([test_word_list], [0])[0][0]
     elif model_name in ['hmm', 'crf']:
         pred_tag_list = model.test([test_word_list])[0]
@@ -47,7 +50,7 @@ def vote(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = predict('bilstm', sentence)
+    result = predict('crf', sentence)
 
     return result
 
