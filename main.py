@@ -20,6 +20,10 @@ def main(pre_data, train_models):
         build_corpus("train")
     dev_word_lists, dev_tag_lists = build_corpus("dev", make_vocab=False)
     test_word_lists, test_tag_lists = build_corpus("test", make_vocab=False)
+    print('training set size:  ', len(train_word_lists))
+    print('validation set size:', len(dev_word_lists))
+    print('testing set size:   ', len(test_word_lists))
+
 
     models_pred = []
 
@@ -86,6 +90,6 @@ def main(pre_data, train_models):
 
 
 if __name__ == "__main__":
-    preprocess_data = False
+    preprocess_data = False  # 重新随机划分数据集
     train_model = ['hmm', 'crf', 'bilstm', 'bilstm_crf']
     main(preprocess_data, train_model)
