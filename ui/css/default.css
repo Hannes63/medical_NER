@@ -1,0 +1,140 @@
+body{
+	font-size: 16px;
+	font-family: SimSun;
+	background-color: #EEEEEE;
+	padding: 0;
+	margin: 0;
+}
+
+a{
+	text-decoration:none;
+}
+
+#title{
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 50px;
+	background-color: #0767c8;
+	line-height: 50px;
+	font-size: 30px;
+	color: white;
+	padding-left: 10px;
+}
+
+#left-area{
+	position:absolute;
+	top: 50;
+	bottom: 0;
+	
+	width: 20%;
+	margin: 0;
+	box-sizing: border-box;
+	border-style: none solid none none;
+	border-color: white;
+	border-width: 2px;
+	padding-top: 30px;
+	float: left;
+}
+
+.left-button{
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align:center;
+	width: 70%;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 6px;
+	border-color: #1E90FF;
+}
+
+.left-button-unclicked{
+	background-color: white;
+	color:black;
+}
+
+.left-button-clicked{
+	background-color: #1E90FF;
+	color: white;
+}
+
+#center-area{
+	position:absolute;
+	top: 50;
+	right: 0;
+	bottom: 0;
+	left: 20%;
+	padding-top: 30px;
+	background-color: white;
+	float: left;
+}
+
+.center-button{
+	margin-left: 5%;
+	height: 50px;
+	width: 100px;
+	line-height: 50px;
+	text-align: center;
+	font-size: 20px;
+	color: white;
+	display: inline-block;
+}
+
+.center-button-good{
+	background-color: #1E90FF;
+}
+
+.center-button-bad{
+	background-color: grey;
+}
+
+#input-text-div, #display-text{
+	display: block;
+	position: absolute;
+	top: 90px;
+	left: 30px;
+	right: 230px;
+	bottom: 20px;
+}
+
+#input-text{
+	width: 100%;
+	height: 100%;
+	font-size: 16px;
+	font-family: SimSun;
+	resize: none;
+	overflow-y: scroll;
+	letter-spacing: 1px;
+}
+
+#id-label-area{
+	display: block;
+	position:absolute;
+	width: 200px;
+	top: 90px;
+	right: 20px;
+	bottom: 20px;
+}
+
+.id-label{
+	text-align:center;
+	margin-left: 0;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	padding: 1px;
+	border-style: solid;
+	box-sizing: border-box;
+	border-width: 1px;
+	user-select: none;
+}
+
+#display-text{
+	display: none;
+	overflow-y: scroll;
+	padding: 3px;
+	letter-spacing: 1px;
+}
