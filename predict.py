@@ -108,15 +108,20 @@ def synthetical_predict(sentence):
     return vote(sentence) + look_up_dict(sentence)
 
 
-def test():
-    with open('./test/input1.txt', 'r', encoding='utf-8') as f:
-        sentence = f.readline()
-        result = synthetical_predict(sentence)
-        print('result1:', result)
-    with open('./test/input2.txt', 'r', encoding='utf-8') as f:
-        sentence = f.readline()
-        result = synthetical_predict(sentence)
-        print('result2:', result)
+def tag_predict(sentence):
+    acronym = {'解剖部位': 'SITE', '疾病和诊断': 'ILL_DIAG', '检验': 'CHECK',
+               '手术': 'OPS', '药物': 'DRUG', '检查': 'EXAM', '影像检查': 'IMAGE',
+               '实验室检验': 'LAB'}
+    ans = synthetical_predict(sentence)
+    tag_list = ['O'] * len(sentence)
+    for item in ans:
+        tag_suffix = acronym[item[2]]
+        if item[0] == item[1] - 1:
+            tag_list[item[0]] = 'S-' + tag_suffix
+        else:
+            tag_list[item[0]] = 'B-' + tag_suffix
+            for i in range(item[0] + 1, item[1] - 1):
+                tag_list[i] = 'M-' + tag_suffix
+            tag_list[item[1] - 1] = 'E-' + tag_suffix
+    return tag_list
 
-
-test()
