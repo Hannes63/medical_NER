@@ -1,12 +1,12 @@
 # -*- coding:utf-8 -*-
 from utils import load_model, prepocess_data_for_lstmcrf
-
+from dict import match
 
 def predict(model_name, sentence):
     """
     :param model: one of four trained model
     :param sentence: a string to be predicted
-    :return: [[b_pos_1, e_pos_1, tag_1], ..., [b_pos_n, e_pos_n, tag_n]]
+    :return: [[b_pos_1, e_pos_1, tag_1], ..., [tb_pos_n, e_pos_n, tag_n]]
     left closed, right open
     """
     assert model_name in ['bilstm', 'bilstm_crf', 'crf', 'hmm']
@@ -68,13 +68,19 @@ def look_up_dict(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = []
+    pred=vote(sentence)
+    begin_index=0
+    result=[]
+    for entity in pred:
+        if(begin_index<entity[0]):
+            result+= match(sentence[begin_index:entity[0]],begin_index)
+        begin_index=entity[1]
+    if(len(sentence[begin_index:])):
+        result+=match(sentence[begin_index:],begin_index)
     return result
-
 
 def synthetical_predict(sentence):
     return vote(sentence) + look_up_dict(sentence)
-
 
 def test():
     with open('./test/input1.txt', 'r', encoding='utf-8') as f:
@@ -85,6 +91,5 @@ def test():
         sentence = f.readline()
         result = synthetical_predict(sentence)
         print('result2:', result)
-
 
 test()
