@@ -1,28 +1,52 @@
 # -*- coding:utf-8 -*-
-from utils import load_model, prepocess_data_for_lstmcrf
-from dict import match
+from make_dict import match
+from utils import load_model, prepocess_data_for_lstmcrf, flatten_lists
+
 
 def predict(model_name, sentence):
     """
-    :param model: one of four trained model
+    :param model_name: one of four trained model
     :param sentence: a string to be predicted
-    :return: [[b_pos_1, e_pos_1, tag_1], ..., [tb_pos_n, e_pos_n, tag_n]]
+    :return: [[b_pos_1, e_pos_1, tag_1], ..., [b_pos_n, e_pos_n, tag_n]]
     left closed, right open
     """
-    assert model_name in ['bilstm', 'bilstm_crf', 'crf', 'hmm']
+    assert model_name in ['bilstm', 'bilstm_crf', 'crf', 'hmm', 'vote4']
     tag2cn = {'SITE': '解剖部位', 'ILL_DIAG': '疾病和诊断', 'CHECK': '检验',
-               'OPS': '手术', 'DRUG': '药物', 'EXAM': '检查', 'IMAGE': '影像检查',
-               'LAB': '实验室检验'}
-    model = load_model('./ckpts/' + model_name + '.pkl')
-    test_word_list = list(sentence)
+              'OPS': '手术', 'DRUG': '药物', 'EXAM': '检查', 'IMAGE': '影像检查',
+              'LAB': '实验室检验'}
     pred_tag_list = []
-    if model_name == 'bilstm':
-        pred_tag_list = model.test([test_word_list], [0])[0][0]
-    elif model_name == 'bilstm_crf':
+    test_word_list = list(sentence)
+    if model_name != 'vote4':
+        model = load_model('./ckpts/' + model_name + '.pkl')
+        if model_name == 'bilstm':
+            pred_tag_list = model.test([test_word_list], [0])[0][0]
+        elif model_name == 'bilstm_crf':
+            test_word_list, _ = prepocess_data_for_lstmcrf([test_word_list], [[0]], test=True)
+            pred_tag_list = model.test(test_word_list, [0])[0][0]
+        elif model_name in ['hmm', 'crf']:
+            pred_tag_list = model.test([test_word_list])[0]
+    else:
+        model1 = load_model('./ckpts/hmm.pkl')
+        pred1 = flatten_lists(model1.test([test_word_list])[0])
+        model2 = load_model('./ckpts/crf.pkl')
+        pred2 = flatten_lists(model2.test([test_word_list])[0])
+        model3 = load_model('./ckpts/bilstm.pkl')
+        pred3 = flatten_lists(model3.test([test_word_list], [0])[0][0])
+        model4 = load_model('./ckpts/bilstm_crf.pkl')
         test_word_list, _ = prepocess_data_for_lstmcrf([test_word_list], [[0]], test=True)
-        pred_tag_list = model.test(test_word_list, [0])[0][0]
-    elif model_name in ['hmm', 'crf']:
-        pred_tag_list = model.test([test_word_list])[0]
+        pred4 = flatten_lists(model4.test(test_word_list, [0])[0][0])
+        results = [pred1, pred2, pred3, pred4]
+
+        for result in zip(*results):
+            # ensemble_tag = Counter(result).most_common(1)[0][0]
+            weight_result = {tag: 0 for tag in result}
+            weight_result[result[0]] += 0.9133
+            weight_result[result[1]] += 0.9620
+            weight_result[result[2]] += 0.9559
+            weight_result[result[3]] += 0.9585
+            ensemble_tag = max(weight_result, key=weight_result.get)
+            pred_tag_list.append(ensemble_tag)
+
     result = []
     begin_index = 0
     for i in range(len(pred_tag_list)):
@@ -50,7 +74,7 @@ def vote(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    result = predict('bilstm', sentence)
+    result = predict('vote4', sentence)
 
     return result
 
@@ -68,19 +92,21 @@ def look_up_dict(sentence):
     :param sentence: a string to be predicted
     :return: the same as 'predict' function above
     """
-    pred=vote(sentence)
-    begin_index=0
-    result=[]
+    pred = vote(sentence)
+    begin_index = 0
+    result = []
     for entity in pred:
-        if(begin_index<entity[0]):
-            result+= match(sentence[begin_index:entity[0]],begin_index)
-        begin_index=entity[1]
-    if(len(sentence[begin_index:])):
-        result+=match(sentence[begin_index:],begin_index)
+        if begin_index < entity[0]:
+            result += match(sentence[begin_index:entity[0]], begin_index)
+        begin_index = entity[1]
+    if len(sentence[begin_index:]):
+        result += match(sentence[begin_index:], begin_index)
     return result
+
 
 def synthetical_predict(sentence):
     return vote(sentence) + look_up_dict(sentence)
+
 
 def test():
     with open('./test/input1.txt', 'r', encoding='utf-8') as f:
@@ -91,5 +117,6 @@ def test():
         sentence = f.readline()
         result = synthetical_predict(sentence)
         print('result2:', result)
+
 
 test()
