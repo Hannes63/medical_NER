@@ -4,18 +4,27 @@ import predict
 
 PORT = 80
 BLANK_RESULT = '%5B%5D' # ==quote('[]')
-PREFIX_LEN = 5 # ==len('text=')
 URLS = ['/',
 		'/index.html',
-		'/action.html',
+		'/bilstm.html',
+		'/bilstm_crf.html',
+		'/crf.html',
+		'/hmm.html',
 		'/css/default.css',
 		'/js/ajax.js',
 		'/js/buttons.js',
 		'/js/jquery.min.js',
        ]
 
-def application(environ, start_response):
+def urldecode(url):
+	result = {}
+	url = url.split(b'&')
+	for i in url:
+		i = i.split(b'=')
+		result[urllib.parse.unquote(i[0].decode('utf-8'))] = urllib.parse.unquote(str(i[1].decode('utf-8')))
+	return result
 
+def application(environ, start_response):
 	mode = environ.get('REQUEST_METHOD')
 
 	if mode=='GET':
@@ -45,8 +54,9 @@ def application(environ, start_response):
 			raise Exception() 
 	except:
 		return [BLANK_RESULT.encode('utf-8')]
-	text = urllib.parse.unquote(str(data[PREFIX_LEN:],encoding='ascii'),encoding='utf-8')
-	result = predict.synthetical_predict(text)
+		
+	data = urldecode(data)
+	result = predict.predict(data['model'],data['text']) + predict.look_up_dict(data['text'])
 	output = urllib.parse.quote(str(result))
 
 	start_response('200 OK', [('Content-Type','text/plain'),('charset','utf-8')])

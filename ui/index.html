@@ -13,17 +13,25 @@
 <body>
 	<div id="title">医疗名词识别系统</div>
 		<div id="left-area">
-		<div class="left-button left-button-clicked">名词识别</div>
-		<a href="./action.html"><div class="left-button left-button-unclicked">模型训练</div></a>
+			<div class="left-button left-button-clicked" id="vote4">综合分析</div>
+			<div class="left-button left-button-unclicked" id="bilstm">bilstm</div>
+			<div class="left-button left-button-unclicked" id="bilstm_crf">bilstm_crf</div>
+			<div class="left-button left-button-unclicked" id="crf">crf</div>
+			<div class="left-button left-button-unclicked" id="hmm">hmm</div>
 		</div>
 	
 	<div id="center-area">
 		<div>
 			<div class="center-button center-button-good" id="center-button-clear">清空</div>
 			<div class="center-button center-button-bad" id="center-button-edit">编辑</div>
+			<div class="center-button center-button-good" id="center-button-uploadfile">导入文件</div>
 			<div class="center-button center-button-good" id="center-button-run">识别</div>
 		</div>
-		<div id="input-text-div"><textarea id="input-text"></textarea></div>
+		<div id="input-text-div">
+			<textarea id="input-text"></textarea>
+			<div id="input-model">vote4</div>
+			<input type="file" id="input-file" accept="text/plain" style="display:none;">
+		</div>
 		<div id="display-text" ></div>
 		<div id="id-label-area"></div>
 	</div>

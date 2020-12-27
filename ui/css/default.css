@@ -138,3 +138,7 @@ a{
 	padding: 3px;
 	letter-spacing: 1px;
 }
+
+#input-model{
+	display:none;
+}

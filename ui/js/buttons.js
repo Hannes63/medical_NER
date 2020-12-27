@@ -4,6 +4,12 @@ $(document).ready(function(){
 	for (var i=0;i<colors.length;i++) html += '.color-'+colors[i]+'{background-color:#'+colors[i]+'; border-style:none;}\n';
 	$("#css-colors").html(html);
 	
+	$(".left-button").click(function(){
+		id = $(this).attr('id');
+		$('#input-model').html(id);
+		$('.left-button-clicked').removeClass('left-button-clicked').addClass('left-button-unclicked');
+		$('#'+id).addClass('left-button-clicked');
+	});
 	
 	$("#center-button-clear").click(function(){
 	    $("#center-button-edit").removeClass("center-button-good");
@@ -32,9 +38,10 @@ $(document).ready(function(){
 	$("#center-button-run").click(function(){
 		if($("#center-button-run").hasClass("center-button-bad")) return;
 		str = $("#input-text").val();
+		model = $("#input-model").html();
 		if (str=="") return alert(BUTTON_RUN_ERROR);
 		
-		result = run(str);
+		result = run(str,model);
 		if (result.length==0) return alert(BUTTON_RUN_ERROR);
 		
 		d = {};
@@ -82,4 +89,18 @@ $(document).ready(function(){
 		$("#input-text").css("display","none");
 		$("#display-text").css("display","block");
 	}); 
+	
+	$("#center-button-uploadfile").click(function(){
+		$('#input-file').val('');
+		$('#input-file').click();
+	});
+	
+	$('#input-file').change(function(){
+		var file = document.getElementById("input-file").files[0];  
+		var reader = new FileReader();
+		reader.onloadend = function(e){
+			$('#input-text').val(e.target.result);
+		}
+		reader.readAsText(file);  
+	});
 });
