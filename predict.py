@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from make import match
+from dict import match
 from utils import load_model, prepocess_data_for_lstmcrf, flatten_lists
 
 
